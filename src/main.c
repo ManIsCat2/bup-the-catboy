@@ -32,18 +32,34 @@ float render_interpolation = 0;
 
 int windoww, windowh;
 
+#include <android/log.h>
+
+#define LOG_TAG "DEBUG_BTCB"
+
 void init_game() {
+    __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at g0");
     random_init();
+    __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at g1");
     graphics_init("Bup the Catboy", WIDTH * 2, HEIGHT * 2);
+    __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at g2");
     graphics_set_resolution(WIDTH, HEIGHT);
+    __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at g3");
     controller_init();
+    __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at g4");
     audio_init();
+    __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at g5");
     load_assets();
+    __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at g6");
     init_data();
+    __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at g7");
     menu_init();
+    __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at g8");
     savefile_load();
+    __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at g9");
     load_level(GET_ASSET(struct Binary, "levels/level100.lvl"));
+    __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at g10");
     load_menu(title_screen);
+    __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at g11");
 }
 
 void* game_loop(void* _) {
@@ -64,9 +80,6 @@ void* game_loop(void* _) {
     return NULL;
 }
 
-#include <android/log.h>
-
-#define LOG_TAG "DEBUG_BTCB"
 
 int SDL_main(int argc, char** argv) {
     __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at 0");
