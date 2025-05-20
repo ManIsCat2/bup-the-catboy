@@ -56,7 +56,7 @@ void init_game() {
     __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at g8");
     savefile_load();
     __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at g9");
-    load_level(GET_ASSET(struct Binary, "levels/level100.lvl"));
+    //load_level(GET_ASSET(struct Binary, "levels/level100.lvl"));
     __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at g10");
     load_menu(title_screen);
     __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at g11");
