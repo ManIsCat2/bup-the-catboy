@@ -21,7 +21,7 @@ OBJS := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRCS))
 TOOLS_SRC := $(shell find $(TOOLS_SRCDIR) -type f -name "*.c")
 TOOLS_EXEC := $(patsubst $(TOOLS_SRCDIR)/%.c,$(TOOLS_BINDIR)/%,$(TOOLS_SRC))
 CFLAGS = -Wall -g -I src -I include -I platform/android/include --std=gnu23
-LDFLAGS := -L./$(LIBS_DIR)
+LDFLAGS := -L./$(LIBS_DIR) -lSDL2
 LIBS :=
 
 BUILD_FILES := $(BIN_DIR) $(LIBS_BIN) $(LIBS_BUILD) src/assets/asset_data.h

@@ -7,7 +7,7 @@ COMPILER ?= clang
 COMPILER_CXX ?= clang++
 AR ?= ar
 SDL_VERSION ?= 2
-LIBRARIES ?= sdl$(SDL_VERSION) glew
+LIBRARIES ?= glew
 COMPRESS ?= 0
 ANDROID_BUILD := 1
 
