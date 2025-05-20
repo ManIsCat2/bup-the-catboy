@@ -120,14 +120,18 @@ ANDROID_MANIFEST := platform/android/android/AndroidManifest.xml
 apk: $(EXECUTABLE) $(ANDROID_MANIFEST)
 	@printf "\033[1m\033[32mPacking APK with AndroidManifest.xml...\033[0m\n"
 	@mkdir -p build/apk/lib/arm64-v8a
+	@if [ ! -f $(EXECUTABLE) ]; then echo "Error: libmain.so not found."; exit 1; fi
+	@if [ ! -f $(ANDROID_MANIFEST) ]; then echo "Error: AndroidManifest.xml not found."; exit 1; fi
 	@cp $(EXECUTABLE) build/apk/lib/arm64-v8a/libmain.so
 	@cp $(ANDROID_MANIFEST) build/apk/AndroidManifest.xml
-	@cd build/apk && zip -r ../$(ZIP_UNCOMPRESSED) . > /dev/null
-	@zipalign -f 4 $(ZIP_UNCOMPRESSED) $(APK_ALIGNED)
+	@if ! command -v zip >/dev/null; then echo "Error: zip not installed."; exit 1; fi
+	@cd build/apk && zip -r ../btcb.unsigned.zip . || (echo "Error: zip failed."; exit 1)
+	@if ! command -v zipalign >/dev/null; then echo "Error: zipalign not installed."; exit 1; fi
+	@zipalign -f 4 build/btcb.unsigned.zip $(APK_ALIGNED)
 
-# APK signing using your certificate and key
 sign-apk: $(APK_ALIGNED) $(CERT_PEM) $(KEY_PK8)
 	@printf "\033[1m\033[32mSigning APK...\033[0m\n"
+	@if ! command -v apksigner >/dev/null; then echo "Error: apksigner not installed."; exit 1; fi
 	@cp $(APK_ALIGNED) $(APK_SIGNED)
 	@apksigner sign --cert $(CERT_PEM) --key $(KEY_PK8) $(APK_SIGNED)
 	@printf "\033[1m\033[32mSigned APK created: $(APK_SIGNED)\033[0m\n"
