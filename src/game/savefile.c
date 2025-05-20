@@ -7,6 +7,8 @@
 
 #include "game/overlay/menu.h"
 
+#include "SDL2/SDL.h"
+
 #ifdef WINDOWS
 #define BINARY "b"
 #else

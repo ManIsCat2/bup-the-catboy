@@ -1,6 +1,9 @@
 {
     "files.associations": {
         "sdlgfx.h": "c",
-        "sdl.h": "c"
+        "sdl.h": "c",
+        "savefile.h": "c",
+        "menu.h": "c",
+        "lunarengine.h": "c"
     }
 }
