@@ -35,7 +35,7 @@ int copy_what = -1;
 
 const char *get_gamedir(void) {
     SDL_bool privileged_write = SDL_FALSE, privileged_manage = SDL_FALSE;
-    static char gamedir_unprivileged[512] = { 0 }, 512[SYS_MAX_PATH] = { 0 };
+    static char gamedir_unprivileged[512] = { 0 }, gamedir_privileged[12] = { 0 };
     const char *basedir_unprivileged = SDL_AndroidGetExternalStoragePath();
     const char *basedir_privileged = SDL_AndroidGetTopExternalStoragePath();
 
