@@ -89,6 +89,6 @@ int SDL_main(int argc, char** argv) {
     graphics_deinit();
     controller_deinit();
     audio_deinit();
-    io_deinit();
+    //io_deinit();
     return 0;
 }
