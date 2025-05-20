@@ -77,7 +77,7 @@ $(TOOLS_BINDIR)/%: $(TOOLS_SRCDIR)/%.cpp
 run-tools:
 	@for tool in $(TOOLS_EXEC); do \
 		printf "\033[1m\033[32mRunning tool \033[36m$$tool\033[0m\n"; \
-		$$tool$(EXE); \
+		$$tool; \
 	done
 
 compile: $(EXECUTABLE)
