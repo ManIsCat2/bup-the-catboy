@@ -26,8 +26,8 @@ LIBS :=
 
 BUILD_FILES := $(BIN_DIR) $(LIBS_BIN) $(LIBS_BUILD) src/assets/asset_data.h
 
-CFLAGS += $(shell pkg-config --cflags $(LIBRARIES)) -DLINUX
-LIBS += $(shell pkg-config --libs $(LIBRARIES)) -lm $(LIBS_FLAGS)
+CFLAGS += -DLINUX
+LIBS += -lm $(LIBS_FLAGS)
 
 CFLAGS += -DNO_VSCODE -DRENDERER_$(RENDERER) -DSDL_VERSION_$(SDL_VERSION)
 
