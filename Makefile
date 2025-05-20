@@ -118,6 +118,8 @@ $(OBJ_DIR)/%.d: $(SRC_DIR)/%.cpp
 ANDROID_MANIFEST := platform/android/android/AndroidManifest.xml
 ANDROID_CLASSES := platform/android/android/classes.dex
 
+ANDROID_SDL2 := platform/android/android/lib/arm64-v8a/libSDL2.so
+
 apk: $(EXECUTABLE) $(ANDROID_MANIFEST)
 	@printf "\033[1m\033[32mPacking APK with AndroidManifest.xml...\033[0m\n"
 	@mkdir -p build/apk/lib/arm64-v8a
@@ -126,6 +128,7 @@ apk: $(EXECUTABLE) $(ANDROID_MANIFEST)
 	@cp $(EXECUTABLE) build/apk/lib/arm64-v8a/libmain.so
 	@cp $(ANDROID_MANIFEST) build/apk/AndroidManifest.xml
 	@cp $(ANDROID_CLASSES) build/apk/classes.dex
+	@cp $(ANDROID_SDL2) build/apk/lib/arm64-v8a/libSDL2.so
 	@if ! command -v zip >/dev/null; then echo "Error: zip not installed."; exit 1; fi
 	@cd build/apk && zip -r ../btcb.unsigned.zip . || (echo "Error: zip failed."; exit 1)
 	@if ! command -v zipalign >/dev/null; then echo "Error: zipalign not installed."; exit 1; fi
