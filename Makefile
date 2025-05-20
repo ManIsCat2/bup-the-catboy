@@ -116,6 +116,7 @@ $(OBJ_DIR)/%.d: $(SRC_DIR)/%.cpp
 
 # APK packaging
 ANDROID_MANIFEST := platform/android/android/AndroidManifest.xml
+ANDROID_CLASSES := platform/android/android/classes.dex
 
 apk: $(EXECUTABLE) $(ANDROID_MANIFEST)
 	@printf "\033[1m\033[32mPacking APK with AndroidManifest.xml...\033[0m\n"
@@ -124,6 +125,7 @@ apk: $(EXECUTABLE) $(ANDROID_MANIFEST)
 	@if [ ! -f $(ANDROID_MANIFEST) ]; then echo "Error: AndroidManifest.xml not found."; exit 1; fi
 	@cp $(EXECUTABLE) build/apk/lib/arm64-v8a/libmain.so
 	@cp $(ANDROID_MANIFEST) build/apk/AndroidManifest.xml
+	@cp $(ANDROID_CLASSES) build/apk/classes.dex
 	@if ! command -v zip >/dev/null; then echo "Error: zip not installed."; exit 1; fi
 	@cd build/apk && zip -r ../btcb.unsigned.zip . || (echo "Error: zip failed."; exit 1)
 	@if ! command -v zipalign >/dev/null; then echo "Error: zipalign not installed."; exit 1; fi
