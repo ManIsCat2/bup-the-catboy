@@ -129,6 +129,7 @@ apk: $(EXECUTABLE) $(ANDROID_MANIFEST)
 	@cp $(ANDROID_MANIFEST) build/apk/AndroidManifest.xml
 	@cp $(ANDROID_CLASSES) build/apk/classes.dex
 	@cp $(ANDROID_SDL2) build/apk/lib/arm64-v8a/libSDL2.so
+	@cp $(PREFIX)/lib/libc++_shared.so build/apk/lib/arm64-v8a/ibc++_shared.so
 	@if ! command -v zip >/dev/null; then echo "Error: zip not installed."; exit 1; fi
 	@cd build/apk && zip -r ../btcb.unsigned.zip . || (echo "Error: zip failed."; exit 1)
 	@if ! command -v zipalign >/dev/null; then echo "Error: zipalign not installed."; exit 1; fi
