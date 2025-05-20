@@ -1,48 +1,27 @@
 ### BUP THE CATBOY CONFIG
 
-# Valid options: OPENGL, OPENGL_LEGACY, SDL_RENDERER. Anything besides OPENGL disables shaders
-RENDERER ?= OPENGL
-
-# Enable cross compilation for macOS with osxcross
+RENDERER ?= SDL_RENDERER
 MACOS_CROSS ?= 0
-
-# Set target arch for osxcross, defaults to system arch
 MACOS_ARCH ?= $(shell uname -m)
-
-# Set a C compiler
 COMPILER ?= clang
-
-# Set a C++ compiler
 COMPILER_CXX ?= clang++
-
-# The ar command
 AR ?= ar
-
-# SDL version (only 2 and 3 is supported)
 SDL_VERSION ?= 3
-
-# External libraries to link against
 LIBRARIES ?= sdl$(SDL_VERSION) glew
-
-# Compile a stripped compressed version
 COMPRESS ?= 0
+ANDROID_BUILD := 1
 
-#############################
-### APPLY COMPILER CONFIG ###
-#############################
-
-ifeq ($(MACOS_CROSS),1)
-	ifeq ($(RENDERER),OPENGL)
-		RENDERER := OPENGL_LEGACY
-	endif
-endif
-
-ifeq ($(OS),Windows_NT)
-	EXE := .exe
-	WINDOWS := 1
+ifeq ($(ANDROID_BUILD),1)
+	EXE := .so
+	ZIP_UNCOMPRESSED := .uncompressed.zip
+	APK_ALIGNED := build/btcb.aligned.apk
+	APK_SIGNED := build/btcb.apk
+	KEYSTORE := keystore.jks
+	KEY_ALIAS := btcb
+	KEY_PASS := password
+	KEYSTORE_PASS := password
 else
 	EXE :=
-	WINDOWS := 0
 endif
 
 ifeq ($(MACOS_CROSS),1)

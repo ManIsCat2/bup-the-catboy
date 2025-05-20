@@ -8,7 +8,7 @@ TOOLS_BINDIR := build/tools
 TOOLS_CC := $(COMPILER)
 TOOLS_CXX := $(COMPILER_CXX)
 BUILD_NAME := btcb
-EXECUTABLE := $(BIN_DIR)/$(BUILD_NAME)$(EXE)
+EXECUTABLE := $(BIN_DIR)/libmain$(EXE)
 
 LIBS_DIR := lib
 LIBS_SRC := $(shell find $(LIBS_DIR)/* -maxdepth 0 -type d -name "*")
@@ -26,20 +26,21 @@ LIBS :=
 
 BUILD_FILES := $(BIN_DIR) $(LIBS_BIN) $(LIBS_BUILD) src/assets/asset_data.h
 
-ifeq ($(WINDOWS),1)
-	CFLAGS += -DWINDOWS
-	LIBS += -static $(shell pkg-config --libs --static $(LIBRARIES)) -lm -lWs2_32 -lopengl32 $(LIBS_FLAGS)
-else ifeq ($(MACOS_CROSS),1)
-	CFLAGS += $(shell $(MACOS_TOOL)-pkg-config --cflags $(LIBRARIES)) -DMACOS
-	LIBS += $(shell $(MACOS_TOOL)-pkg-config --libs $(LIBRARIES)) -lm $(LIBS_FLAGS)
-else
-	CFLAGS += $(shell pkg-config --cflags $(LIBRARIES)) -DLINUX
-	LIBS += $(shell pkg-config --libs $(LIBRARIES)) -lm $(LIBS_FLAGS)
-endif
+CFLAGS += $(shell pkg-config --cflags $(LIBRARIES)) -DLINUX
+LIBS += $(shell pkg-config --libs $(LIBRARIES)) -lm $(LIBS_FLAGS)
 
 CFLAGS += -DNO_VSCODE -DRENDERER_$(RENDERER) -DSDL_VERSION_$(SDL_VERSION)
 
-.PHONY: all clean compile-libs compile-tools run-tools tools compile
+# Android APK variables
+APK_UNALIGNED := build/app.unaligned.apk
+APK_ALIGNED := build/app.aligned.apk
+APK_SIGNED := sm64coopdx.apk
+ZIP_UNCOMPRESSED := unsigned.zip
+
+CERT_PEM := platform/android/certificate.pem
+KEY_PK8 := platform/android/key.pk8
+
+.PHONY: all clean compile-libs compile-tools run-tools tools compile apk sign-apk
 
 all:
 	@$(MAKE) clean --silent
@@ -47,6 +48,8 @@ all:
 	@$(MAKE) run-tools --silent
 	@$(MAKE) compile-libs --silent
 	@$(MAKE) compile --silent
+	@$(MAKE) apk --silent
+	@$(MAKE) sign-apk --silent
 
 tools:
 	@$(MAKE) compile-tools --silent
@@ -82,53 +85,24 @@ compile: $(EXECUTABLE)
 $(EXECUTABLE): $(OBJS)
 	@printf "\033[1m\033[32mLinking \033[36m$(OBJ_DIR) \033[32m-> \033[34m$(EXECUTABLE)\033[0m\n"
 	@mkdir -p $(BIN_DIR)
-	@$(CXX) $(LDFLAGS) -o $@ $^ $(LIBS)
-	@if [ $(COMPRESS) == 1 ]; then \
-		strip $(EXECUTABLE); \
-		upx --best --lzma $(EXECUTABLE); \
-	fi
-	@if [ $(MACOS_CROSS) == 1 ]; then \
-		printf "\033[1m\033[32mBundling \033[36m$(EXECUTABLE) \033[32m-> \033[34m$(EXECUTABLE).app\033[0m\n"; \
-		mkdir -p $(EXECUTABLE).app/Contents/MacOS; \
-		cp $(EXECUTABLE) $(EXECUTABLE).app/Contents/MacOS; \
-		./osxcross-patch-exe.sh $(EXECUTABLE).app/Contents/MacOS/ $(EXECUTABLE).app/Contents/MacOS/$(BUILD_NAME) \
-		echo '<?xml version="1.0" encoding="UTF-8"?>' > $(EXECUTABLE).app/Contents/Info.plist; \
-		echo '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">' >> $(EXECUTABLE).app/Contents/Info.plist; \
-		echo '<plist version="1.0">' >> $(EXECUTABLE).app/Contents/Info.plist; \
-		echo '<dict>' >> $(EXECUTABLE).app/Contents/Info.plist; \
-		echo '<key>CFBundleName</key>' >> $(EXECUTABLE).app/Contents/Info.plist; \
-		echo '<string>Bup The Catboy</string>' >> $(EXECUTABLE).app/Contents/Info.plist; \
-		echo '<key>CFBundleExecutable</key>' >> $(EXECUTABLE).app/Contents/Info.plist; \
-		echo '<string>btcb</string>' >> $(EXECUTABLE).app/Contents/Info.plist; \
-		echo '<key>CFBundleIdentifier</key>' >> $(EXECUTABLE).app/Contents/Info.plist; \
-		echo '<string>com.dominicentek.btcb</string>' >> $(EXECUTABLE).app/Contents/Info.plist; \
-		echo '<key>CFBundleVersion</key>' >> $(EXECUTABLE).app/Contents/Info.plist; \
-		echo '<string>1.0</string>' >> $(EXECUTABLE).app/Contents/Info.plist; \
-		echo '<key>CFBundlePackageType</key>' >> $(EXECUTABLE).app/Contents/Info.plist; \
-		echo '<string>APPL</string>' >> $(EXECUTABLE).app/Contents/Info.plist; \
-		echo '<key>CFBundleInfoDictionaryVersion</key>' >> $(EXECUTABLE).app/Contents/Info.plist; \
-		echo '<string>6.0</string>' >> $(EXECUTABLE).app/Contents/Info.plist; \
-		echo '<key>LSMinimumSystemVersion</key>' >> $(EXECUTABLE).app/Contents/Info.plist; \
-		echo '<string>$(OSXCROSS_OSX_VERSION_MIN)</string>' >> $(EXECUTABLE).app/Contents/Info.plist; \
-		echo '</dict>' >> $(EXECUTABLE).app/Contents/Info.plist; \
-		echo '</plist>' >> $(EXECUTABLE).app/Contents/Info.plist; \
-	fi
+	@$(CXX) $(LDFLAGS) -shared -fPIC -o $@ $^ $(LIBS)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@printf "\033[1m\033[32mCompiling \033[36m$< \033[32m-> \033[34m$@\033[0m\n"
 	@mkdir -p $(dir $@)
-	@$(CC) $(CFLAGS) -c $< -o $@
+	@$(CC) $(CFLAGS) -fPIC -c $< -o $@
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@printf "\033[1m\033[32mCompiling \033[36m$< \033[32m-> \033[34m$@\033[0m\n"
 	@mkdir -p $(dir $@)
-	@$(CXX) $(CFLAGS) -c $< -o $@
+	@$(CXX) $(CFLAGS) -fPIC -c $< -o $@
 
 clean:
 	@for i in $(BUILD_FILES); do \
 		printf "\033[1m\033[32mDeleting \033[36m$$i \033[32m-> \033[31mX\033[0m\n"; \
 		rm -rf $$i; \
 	done
+	@rm -f $(APK_SIGNED) $(APK_ALIGNED) $(APK_UNALIGNED) $(ZIP_UNCOMPRESSED) $(EXECUTABLE)
 
 -include $(OBJS:.o=.d)
 
@@ -138,6 +112,22 @@ $(OBJ_DIR)/%.d: $(SRC_DIR)/%.c
 
 $(OBJ_DIR)/%.d: $(SRC_DIR)/%.cpp
 	@mkdir -p $(dir $@)
-	@$(CC) $(CFLAGS) -MM -MT $(@:.d=.o) $< -o $@ 2> /dev/null
+	@$(CXX) $(CFLAGS) -MM -MT $(@:.d=.o) $< -o $@ 2> /dev/null
 
--include $(OBJS:.o=.d)
+# APK packaging
+ANDROID_MANIFEST := platform/android/android/AndroidManifest.xml
+
+apk: $(EXECUTABLE) $(ANDROID_MANIFEST)
+	@printf "\033[1m\033[32mPacking APK with AndroidManifest.xml...\033[0m\n"
+	@mkdir -p build/apk/lib/arm64-v8a
+	@cp $(EXECUTABLE) build/apk/lib/arm64-v8a/libmain.so
+	@cp $(ANDROID_MANIFEST) build/apk/AndroidManifest.xml
+	@cd build/apk && zip -r ../$(ZIP_UNCOMPRESSED) . > /dev/null
+	@zipalign -f 4 $(ZIP_UNCOMPRESSED) $(APK_ALIGNED)
+
+# APK signing using your certificate and key
+sign-apk: $(APK_ALIGNED) $(CERT_PEM) $(KEY_PK8)
+	@printf "\033[1m\033[32mSigning APK...\033[0m\n"
+	@cp $(APK_ALIGNED) $(APK_SIGNED)
+	@apksigner sign --cert $(CERT_PEM) --key $(KEY_PK8) $(APK_SIGNED)
+	@printf "\033[1m\033[32mSigned APK created: $(APK_SIGNED)\033[0m\n"
