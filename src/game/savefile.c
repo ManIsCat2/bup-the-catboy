@@ -96,7 +96,7 @@ void savefile_copy(int from, int to) {
 }
 
 void savefile_save() {
-    char* game = get_gamedir();
+    /*char* game = get_gamedir();
     __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at s0");
     char path[512] = {0};
     snprintf(path, 512, "%s/%s", game, SAVEFILE_FILENAME);
@@ -105,7 +105,7 @@ void savefile_save() {
     __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at s2");
     //fwrite(&savedata, sizeof(savedata), 1, f);
     __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at s3");
-    fclose(f);
+    fclose(f);*/
 }
 
 struct SaveFile* savefile_get(int file) {
