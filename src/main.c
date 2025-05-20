@@ -64,16 +64,25 @@ void* game_loop(void* _) {
     return NULL;
 }
 
+#include <android/log.h>
+
+#define LOG_TAG "DEBUG_BTCB"
+
 int SDL_main(int argc, char** argv) {
+    __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at 0");
     if (argc >= 2) {
         if (strcmp(argv[1], "--extract") == 0) {
             extract_assets();
             return 0;
         }
     }
+    __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at 1");
     drawlist = LE_CreateDrawList();
+    __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at 2");
     init_game();
+    __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at 3");
     pthread_create(&game_loop_thread, NULL, game_loop, NULL);
+    __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at 4");
     while (true) {
         if (requested_quit()) break;
         graphics_get_size(&windoww, &windowh);
@@ -84,11 +93,15 @@ int SDL_main(int argc, char** argv) {
         LE_ClearDrawList(drawlist);
         graphics_end_frame();
     }
+    __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at 5");
     running = false;
+    __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at 6");
     pthread_join(game_loop_thread, NULL);
+    __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at 7");
     graphics_deinit();
+    __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at 8");
     controller_deinit();
     audio_deinit();
-    //io_deinit();
+    io_deinit();
     return 0;
 }
