@@ -29,8 +29,31 @@ enum {
 } curr_context;
 int copy_what = -1;
 
+#define ANDROID_APPNAME "com.maniscat2.btcb"
+
+const char *get_gamedir(void) {
+    SDL_bool privileged_write = SDL_FALSE, privileged_manage = SDL_FALSE;
+    static char gamedir_unprivileged[512] = { 0 }, 512[SYS_MAX_PATH] = { 0 };
+    const char *basedir_unprivileged = SDL_AndroidGetExternalStoragePath();
+    const char *basedir_privileged = SDL_AndroidGetTopExternalStoragePath();
+
+    snprintf(gamedir_unprivileged, sizeof(gamedir_unprivileged), 
+             "%s", basedir_unprivileged);
+    snprintf(gamedir_privileged, sizeof(gamedir_privileged), 
+             "%s/%s", basedir_privileged, ANDROID_APPNAME);
+
+    //Android 10 and below
+    privileged_write = SDL_AndroidRequestPermission("android.permission.WRITE_EXTERNAL_STORAGE");
+    //Android 11 and up
+    privileged_manage = SDL_AndroidRequestPermission("android.permission.MANAGE_EXTERNAL_STORAGE");
+    return (privileged_write || privileged_manage) ? gamedir_privileged : gamedir_unprivileged;
+}
+
 void savefile_load() {
-    FILE* f = fopen(SAVEFILE_FILENAME, "r" BINARY);
+    char* game = get_gamedir();
+    char path[512] = {0};
+    snprintf(path, 512, "%s/%s", game, SAVEFILE_FILENAME);
+    FILE* f = fopen(path, "r" BINARY);
     if (!f) {
         savedata.selected_savefile = 0;
         for (int i = 0; i < NUM_SAVEFILES; i++) {
@@ -59,7 +82,10 @@ void savefile_copy(int from, int to) {
 }
 
 void savefile_save() {
-    FILE* f = fopen(SAVEFILE_FILENAME, "w" BINARY);
+    char* game = get_gamedir();
+    char path[512] = {0};
+    snprintf(path, 512, "%s/%s", game, SAVEFILE_FILENAME);
+    FILE* f = fopen(path, "w" BINARY);
     fwrite(&savedata, sizeof(savedata), 1, f);
     fclose(f);
 }
