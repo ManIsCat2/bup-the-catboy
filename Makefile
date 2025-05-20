@@ -21,7 +21,7 @@ OBJS := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRCS))
 TOOLS_SRC := $(shell find $(TOOLS_SRCDIR) -type f -name "*.c")
 TOOLS_EXEC := $(patsubst $(TOOLS_SRCDIR)/%.c,$(TOOLS_BINDIR)/%,$(TOOLS_SRC))
 CFLAGS = -Wall -g -I src -I include -I platform/android/include --std=gnu23
-LDFLAGS := -L./$(LIBS_DIR) -L ./platform/android/android/lib/arm64-v8a/ -shared
+LDFLAGS := -L./$(LIBS_DIR) -L./platform/android/android/lib/arm64-v8a
 LIBS :=
 
 BUILD_FILES := $(BIN_DIR) $(LIBS_BIN) $(LIBS_BUILD) src/assets/asset_data.h
@@ -85,7 +85,7 @@ compile: $(EXECUTABLE)
 $(EXECUTABLE): $(OBJS)
 	@printf "\033[1m\033[32mLinking \033[36m$(OBJ_DIR) \033[32m-> \033[34m$(EXECUTABLE)\033[0m\n"
 	@mkdir -p $(BIN_DIR)
-	@$(CXX) $(LDFLAGS) -shared -fPIC -o $@ $^ $(LIBS)
+	@$(CXX) -shared $(LDFLAGS) -fPIC -o $@ $^ $(LIBS)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@printf "\033[1m\033[32mCompiling \033[36m$< \033[32m-> \033[34m$@\033[0m\n"
