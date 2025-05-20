@@ -56,7 +56,7 @@ const char *get_gamedir(void) {
 }
 
 void savefile_load() {
-    char* game = get_gamedir();
+    /*char* game = get_gamedir();
     char path[512] = {0};
     snprintf(path, 512, "%s/%s", game, SAVEFILE_FILENAME);
      __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at f0");
@@ -77,9 +77,9 @@ void savefile_load() {
         fclose(f);
          __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at f6");
     }
-     __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at f7");
+     __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at f7");*/
     savefile_select(savedata.selected_savefile);
-     __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at f8");
+     //__android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at f8");
 }
 
 void savefile_select(int file) {
