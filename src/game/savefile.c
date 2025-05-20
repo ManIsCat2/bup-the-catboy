@@ -55,19 +55,27 @@ void savefile_load() {
     char* game = get_gamedir();
     char path[512] = {0};
     snprintf(path, 512, "%s/%s", game, SAVEFILE_FILENAME);
+     __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at f0");
     FILE* f = fopen(path, "r" BINARY);
+     __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at f1");
     if (!f) {
         savedata.selected_savefile = 0;
         for (int i = 0; i < NUM_SAVEFILES; i++) {
             savefile_erase(i);
         }
+         __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at f2");
         savefile_save();
+         __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at f3");
     }
     else {
         fread(&savedata, sizeof(savedata), 1, f);
+         __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at f4");
         fclose(f);
+         __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at f6");
     }
+     __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at f7");
     savefile_select(savedata.selected_savefile);
+     __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at f8");
 }
 
 void savefile_select(int file) {
