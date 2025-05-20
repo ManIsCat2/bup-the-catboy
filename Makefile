@@ -32,10 +32,10 @@ LIBS += $(shell pkg-config --libs $(LIBRARIES)) -lm $(LIBS_FLAGS)
 CFLAGS += -DNO_VSCODE -DRENDERER_$(RENDERER) -DSDL_VERSION_$(SDL_VERSION)
 
 # Android APK variables
-APK_UNALIGNED := build/app.unaligned.apk
-APK_ALIGNED := build/app.aligned.apk
-APK_SIGNED := sm64coopdx.apk
-ZIP_UNCOMPRESSED := unsigned.zip
+APK_UNALIGNED := build/btcb.unaligned.apk
+APK_ALIGNED := build/btcb.aligned.apk
+APK_SIGNED := build/btcb.apk
+ZIP_UNCOMPRESSED := build/btcb.unsigned.zip
 
 CERT_PEM := platform/android/certificate.pem
 KEY_PK8 := platform/android/key.pk8
