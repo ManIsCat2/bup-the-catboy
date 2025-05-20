@@ -103,7 +103,7 @@ void savefile_save() {
     __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at s1");
     FILE* f = fopen(path, "w" BINARY);
     __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at s2");
-    fwrite(&savedata, sizeof(savedata), 1, f);
+    //fwrite(&savedata, sizeof(savedata), 1, f);
     __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at s3");
     fclose(f);
 }
