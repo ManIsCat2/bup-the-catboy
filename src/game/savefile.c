@@ -9,6 +9,10 @@
 
 #include "SDL2/SDL.h"
 
+#include <android/log.h>
+
+#define LOG_TAG "DEBUG_BTCB"
+
 #ifdef WINDOWS
 #define BINARY "b"
 #else
