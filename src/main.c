@@ -105,7 +105,7 @@ int SDL_main(int argc, char** argv) {
         __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at Q2");
         render_interpolation = min((ticks() - game_start_ticks) / STEP_TIME * TIME_SCALE, 1);
         __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at Q3");
-        render_level(drawlist, WIDTH, HEIGHT, render_interpolation);
+        //render_level(drawlist, WIDTH, HEIGHT, render_interpolation);
         __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at Q4");
         LE_Render(drawlist, gfxcmd_process);
         __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at Q5");
