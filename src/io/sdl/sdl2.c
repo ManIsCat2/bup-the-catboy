@@ -134,6 +134,7 @@ bool requested_quit() {
 
 void sdl_window_init(const char* title, int width, int height, enum SDL_GFX_API gfx_api, void** window, void** gfx_handle) {
     SDL_Init(SDL_INIT_VIDEO);
+    SDL_SetHint(SDL_HINT_ORIENTATIONS, "LandscapeLeft LandscapeRight");
     if (getenv("WAYLAND_DISPLAY")) SDL_SetHint("SDL_VIDEODRIVER", "wayland"); // run in native wayland when on wayland
     int flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN;
     if (gfx_api == SDL_GFX_API_OPENGL) {

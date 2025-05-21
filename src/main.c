@@ -80,8 +80,28 @@ void* game_loop(void* _) {
     return NULL;
 }
 
+#define ANDROID_APPNAME "com.maniscat2.btcb"
+
+const char *get_gamedir(void) {
+    SDL_bool privileged_write = SDL_FALSE, privileged_manage = SDL_FALSE;
+    static char gamedir_unprivileged[512] = { 0 }, gamedir_privileged[12] = { 0 };
+    const char *basedir_unprivileged = SDL_AndroidGetExternalStoragePath();
+    const char *basedir_privileged = SDL_AndroidGetTopExternalStoragePath();
+
+    snprintf(gamedir_unprivileged, sizeof(gamedir_unprivileged), 
+             "%s", basedir_unprivileged);
+    snprintf(gamedir_privileged, sizeof(gamedir_privileged), 
+             "%s/%s", basedir_privileged, ANDROID_APPNAME);
+
+    //Android 10 and below
+    privileged_write = SDL_AndroidRequestPermission("android.permission.WRITE_EXTERNAL_STORAGE");
+    //Android 11 and up
+    privileged_manage = SDL_AndroidRequestPermission("android.permission.MANAGE_EXTERNAL_STORAGE");
+    return (privileged_write || privileged_manage) ? gamedir_privileged : gamedir_unprivileged;
+}
 
 int SDL_main(int argc, char** argv) {
+    FILE* maingame = fopen(get_gamedir(), "w");
     __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at 0");
     if (argc >= 2) {
         if (strcmp(argv[1], "--extract") == 0) {
@@ -105,7 +125,7 @@ int SDL_main(int argc, char** argv) {
         __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at Q2");
         render_interpolation = min((ticks() - game_start_ticks) / STEP_TIME * TIME_SCALE, 1);
         __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at Q3");
-        //render_level(drawlist, WIDTH, HEIGHT, render_interpolation);
+        render_level(drawlist, WIDTH, HEIGHT, render_interpolation);
         __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at Q4");
         LE_Render(drawlist, gfxcmd_process);
         __android_log_print(ANDROID_LOG_INFO, LOG_TAG, "I'm at Q5");
