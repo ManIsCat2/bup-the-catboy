@@ -34,6 +34,8 @@ int windoww, windowh;
 
 #include <android/log.h>
 
+#include "SDL2/SDL.h"
+
 #define LOG_TAG "DEBUG_BTCB"
 
 void init_game() {
